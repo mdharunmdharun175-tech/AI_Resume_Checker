@@ -1,5 +1,5 @@
 Visual Link:
-HireFair AI 🛡️  - https://hirefair-ai.ai.studio
+HireFair AI 🛡️  - https://hirefair-ai-453486149906.asia-southeast1.run.app
 
 AI Resume Screening, Candidate Ranking & Bias Detection Platform
 
