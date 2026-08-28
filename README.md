@@ -16,7 +16,7 @@ The live application is deployed on Google Cloud and is available for demonstrat
 🎥 Project Demo Video
 
 Video:
-Add your project demonstration video link here
+https://drive.google.com/file/d/1JnKo4KkLSaa4cxmbO9dStjFYimjmTIa-/view?usp=drive_link
 
 Replace PASTE_YOUR_VIDEO_LINK_HERE with your YouTube, Google Drive, Loom, or other public video URL before submitting the project.
 
