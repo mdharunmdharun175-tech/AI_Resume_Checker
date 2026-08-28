@@ -129,6 +129,65 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
+      {/* AI Security & Adversarial Injection Defense Controls */}
+      <div className="bg-white rounded-xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-indigo-600" />
+            <span>AI Code Security & Prompt Injection Defense</span>
+          </h3>
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800 uppercase tracking-wide">
+            Enterprise Tier Security Active
+          </span>
+        </div>
+
+        <p className="text-xs text-slate-500">
+          Enforces multi-layer sanitization against prompt injection attacks, delimiter escapes, hidden invisible text exploits, and adversarial score manipulation in candidate resumes and JD documents.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 text-xs">
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <div className="flex items-center gap-2 font-bold text-slate-900">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Prompt Injection Guard</span>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Detects and neutralizes phrases like "ignore previous instructions" and forced scoring overrides.
+            </p>
+          </div>
+
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <div className="flex items-center gap-2 font-bold text-slate-900">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Zero-Width / Invisible Text Stripping</span>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Filters Unicode zero-width spaces (\u200B) and white-on-white text used to game ranking algorithms.
+            </p>
+          </div>
+
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <div className="flex items-center gap-2 font-bold text-slate-900">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Delimited Sandbox Isolation</span>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Wraps untrusted user uploads in strict cryptographically unique payload tags.
+            </p>
+          </div>
+
+          <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <div className="flex items-center gap-2 font-bold text-slate-900">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>XSS & Script Payload Sanitizer</span>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Sanitizes &lt;script&gt;, javascript: URIs, and malicious DOM event handlers in parsed documents.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Transparent Algorithm Scoring Weights */}
       <div className="bg-white rounded-xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-5">
         <div className="flex items-center justify-between">

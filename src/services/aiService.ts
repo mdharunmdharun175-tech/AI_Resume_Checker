@@ -1,4 +1,5 @@
 import { Job, Candidate, BiasFlag, ScreeningResult, ScreeningWeights, MatchGrade } from '../types';
+import { AISecurityGuard } from './aiSecurityGuard';
 
 export interface ExtractedJobRequirements {
   title: string;
@@ -10,17 +11,25 @@ export interface ExtractedJobRequirements {
   responsibilities: string[];
   qualifications: string[];
   detectedBiasFlags: Omit<BiasFlag, 'id' | 'jobId' | 'jobTitle' | 'status' | 'detectedAt'>[];
+  securityStatus?: {
+    isSafe: boolean;
+    threatLevel: string;
+  };
 }
 
 export class AiService {
   /**
-   * Extracts structured requirements from raw text or uploaded JD document.
+   * Extracts structured requirements from raw text or uploaded JD document with AI security defense.
    */
-  static async extractJobRequirements(text: string): Promise<ExtractedJobRequirements> {
+  static async extractJobRequirements(rawText: string): Promise<ExtractedJobRequirements> {
+    // 1. Run AI Security Audit & Sanitization
+    const securityAudit = AISecurityGuard.auditInput(rawText);
+    const sanitizedText = securityAudit.sanitizedText;
+
     // Simulate real AI processing latency
     await new Promise((r) => setTimeout(r, 600));
 
-    const lower = text.toLowerCase();
+    const lower = sanitizedText.toLowerCase();
     const isPython = lower.includes('python') || lower.includes('backend');
     const isFrontend = lower.includes('react') || lower.includes('frontend') || lower.includes('typescript');
 
@@ -184,6 +193,10 @@ export class AiService {
     job: Job,
     weights: ScreeningWeights
   ): ScreeningResult {
+    // 0. Perform Security Audit on candidate text
+    const resumeTextToScan = candidate.rawResumeText || candidate.summary || '';
+    const securityAudit = AISecurityGuard.auditInput(resumeTextToScan);
+
     // 1. Required Skills Score
     const reqSkills = job.requiredSkills;
     let reqMatches = 0;
@@ -242,13 +255,18 @@ export class AiService {
     const preferredSkillsScore = prefSkills.length > 0 ? Math.round((prefMatches / prefSkills.length) * 100) : 70;
 
     // Weighted Overall Score
-    const overallScore = Math.round(
+    let overallScore = Math.round(
       requiredSkillsScore * weights.requiredSkills +
       experienceScore * weights.experience +
       semanticScore * weights.semanticMatch +
       educationScore * weights.education +
       preferredSkillsScore * weights.preferredSkills
     );
+
+    // If critical prompt injection was detected, cap or penalize manipulated score
+    if (!securityAudit.isSafe && securityAudit.threatLevel === 'critical') {
+      overallScore = Math.min(overallScore, 45);
+    }
 
     let matchGrade: MatchGrade = 'Low Match';
     if (overallScore >= 88) matchGrade = 'Strong Match';
@@ -257,7 +275,9 @@ export class AiService {
     else matchGrade = 'Low Match';
 
     const semanticExplanation =
-      overallScore >= 85
+      !securityAudit.isSafe
+        ? `⚠️ AI Security Alert: Document contains potential prompt injection or evaluation override syntax. System isolated the payload and preserved objective criteria evaluation.`
+        : overallScore >= 85
         ? `High conceptual alignment: Candidate demonstrates relevant experience in ${job.requiredSkills.slice(0, 3).join(', ')} matching the target position's core requirements.`
         : overallScore >= 70
         ? `Moderate alignment: Candidate has foundational background in software development, with specific technical areas requiring human reviewer evaluation.`
@@ -281,6 +301,7 @@ export class AiService {
       missingEvidence,
       semanticExplanation,
       criteriaTransparency: [
+        { name: 'AI Security & Prompt Injection Inspection', checked: true, jobRelevant: true, note: securityAudit.isSafe ? 'Passed verified input sanitization' : `Threat detected: ${securityAudit.detectedThreats.map(t => t.type).join(', ')}` },
         { name: 'Required Skills Matching', checked: true, jobRelevant: true, note: 'Extracted from technical summary and job history' },
         { name: 'Relevant Experience Tenure', checked: true, jobRelevant: true, note: `${candYears} years verified professional experience` },
         { name: 'Semantic Job Relevance', checked: true, jobRelevant: true, note: 'Embedding similarity evaluated against job responsibilities' },
@@ -291,6 +312,12 @@ export class AiService {
       ],
       processedAt: new Date().toISOString(),
       isFairModeProcessed: true,
+      securityAudit: {
+        isSafe: securityAudit.isSafe,
+        threatLevel: securityAudit.threatLevel,
+        detectedThreatsCount: securityAudit.detectedThreats.length,
+        securityFlags: securityAudit.detectedThreats.map((t) => t.description),
+      },
     };
   }
 }

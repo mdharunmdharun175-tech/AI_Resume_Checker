@@ -150,6 +150,12 @@ export interface ScreeningResult {
   }[];
   processedAt: string;
   isFairModeProcessed: boolean;
+  securityAudit?: {
+    isSafe: boolean;
+    threatLevel: 'none' | 'low' | 'medium' | 'high' | 'critical';
+    detectedThreatsCount: number;
+    securityFlags?: string[];
+  };
 }
 
 export interface RecruiterDecision {

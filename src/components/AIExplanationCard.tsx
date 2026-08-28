@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Check, X, Info, Sparkles, HelpCircle } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, Check, X, Info, Sparkles, HelpCircle, Lock } from 'lucide-react';
 import { ScreeningResult, Candidate, Job } from '../types';
 import { MatchScore } from './MatchScore';
 
@@ -14,10 +14,52 @@ export const AIExplanationCard: React.FC<AIExplanationCardProps> = ({
   job,
   screening,
 }) => {
-  const { breakdown, weightsUsed, matchedEvidence, missingEvidence, semanticExplanation, criteriaTransparency } = screening;
+  const { breakdown, weightsUsed, matchedEvidence, missingEvidence, semanticExplanation, criteriaTransparency, securityAudit } = screening;
 
   return (
     <div className="bg-white rounded-xl border border-slate-200/80 p-5 sm:p-6 shadow-xs space-y-6">
+      {/* AI Security Threat Guard Status Banner */}
+      {securityAudit && (
+        <div
+          className={`p-3.5 rounded-xl border flex items-start justify-between gap-3 text-xs ${
+            securityAudit.isSafe
+              ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950'
+              : 'bg-rose-50 border-rose-200 text-rose-950'
+          }`}
+        >
+          <div className="flex items-start gap-2.5">
+            {securityAudit.isSafe ? (
+              <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+            ) : (
+              <ShieldAlert className="w-5 h-5 text-rose-600 shrink-0 mt-0.5 animate-pulse" />
+            )}
+            <div>
+              <div className="font-bold text-xs flex items-center gap-2">
+                <span>AI Security Level: {securityAudit.isSafe ? 'Verified & Protected' : 'Adversarial Threat Detected'}</span>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                    securityAudit.threatLevel === 'none' || securityAudit.threatLevel === 'low'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-rose-100 text-rose-800'
+                  }`}
+                >
+                  Threat: {securityAudit.threatLevel}
+                </span>
+              </div>
+              <p className="mt-0.5 text-[11px] opacity-90">
+                {securityAudit.isSafe
+                  ? 'Input document passed deep regex heuristic sanitization, delimiter bounds checking, and prompt injection defense.'
+                  : `Security Alert: ${securityAudit.securityFlags?.join(', ') || 'Potential prompt injection attempt neutralized.'}`}
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-slate-500 bg-white/80 px-2 py-1 rounded-lg border border-slate-200">
+            <Lock className="w-3 h-3 text-indigo-600" />
+            <span>Isolated Sandbox</span>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div>
