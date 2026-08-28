@@ -1,4 +1,5 @@
-Visual HireFair AI 🛡️ link - https://hirefair-ai.ai.studio
+Visual Link:
+HireFair AI 🛡️  - https://hirefair-ai.ai.studio
 
 AI Resume Screening, Candidate Ranking & Bias Detection Platform
 
