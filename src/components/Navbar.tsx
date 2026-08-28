@@ -16,7 +16,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { UserRole } from '../types';
 
-export const Navbar: React.FC<{ onToggleSidebar: () => void }> = ({ onToggleSidebar }) => {
+export const Navbar: React.FC<{ onToggleSidebar?: () => void }> = ({ onToggleSidebar }) => {
   const {
     currentUser,
     userRole,
@@ -35,7 +35,11 @@ export const Navbar: React.FC<{ onToggleSidebar: () => void }> = ({ onToggleSide
     navigate,
     candidates,
     resetDemoData,
+    toggleSidebar,
+    isSidebarOpen,
   } = useApp();
+
+  const handleToggle = onToggleSidebar || toggleSidebar;
 
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -83,21 +87,40 @@ export const Navbar: React.FC<{ onToggleSidebar: () => void }> = ({ onToggleSide
     : null;
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur-xs border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between gap-3">
-      {/* Left: Mobile menu toggle + Job context */}
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur-xs border-b border-slate-200/80 px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-3">
+      {/* Left: Menu toggle (three bars) + Brand Logo + Job context */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Three Bar Menu Toggle Button */}
         <button
-          onClick={onToggleSidebar}
-          className="p-2 -ml-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg lg:hidden cursor-pointer"
-          aria-label="Toggle navigation"
+          id="btn-toggle-menu"
+          onClick={handleToggle}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-indigo-300 bg-slate-50 hover:bg-indigo-50/70 text-slate-700 hover:text-indigo-600 transition-all cursor-pointer font-bold text-xs shadow-2xs group"
+          title="Open Navigation Menu"
+          aria-label="Toggle navigation menu"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-4.5 h-4.5 text-indigo-600 group-hover:scale-110 transition-transform" />
+          <span className="font-semibold text-slate-800 text-xs hidden xs:inline">Menu</span>
         </button>
 
+        {/* Brand Logo & Name */}
+        <div
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 cursor-pointer group shrink-0"
+          title="HireFair AI Dashboard"
+        >
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 via-indigo-500 to-teal-400 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div className="hidden sm:block">
+            <div className="text-xs font-extrabold text-slate-900 leading-tight">HireFair AI</div>
+            <div className="text-[9px] uppercase font-bold text-indigo-600 tracking-wider">Fair Screening</div>
+          </div>
+        </div>
+
         {/* Active Job Context Selector */}
-        <div className="hidden sm:flex items-center gap-2 bg-slate-100/90 hover:bg-slate-200/70 transition-colors px-3 py-1.5 rounded-lg border border-slate-200">
+        <div className="hidden md:flex items-center gap-2 bg-slate-100/90 hover:bg-slate-200/70 transition-colors px-3 py-1.5 rounded-lg border border-slate-200">
           <Briefcase className="w-4 h-4 text-indigo-600 shrink-0" />
-          <span className="text-xs text-slate-500 font-medium">Job Context:</span>
+          <span className="text-xs text-slate-500 font-medium">Job:</span>
           <select
             value={activeJobId}
             onChange={(e) => setActiveJobId(e.target.value)}

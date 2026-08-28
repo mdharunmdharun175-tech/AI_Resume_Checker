@@ -7,10 +7,13 @@ import {
   GitCompare,
   ShieldCheck,
   Briefcase,
+  Upload,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { CandidateRankingTable } from '../components/CandidateRankingTable';
 import { FairScreeningBanner } from '../components/FairScreeningBanner';
+import { ResumeUploaderModal } from '../components/ResumeUploaderModal';
 
 export const CandidatesPage: React.FC = () => {
   const {
@@ -24,6 +27,8 @@ export const CandidatesPage: React.FC = () => {
     clearCompareCandidates,
     navigate,
   } = useApp();
+
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   const currentJob = jobs.find((j) => j.id === activeJobId) || jobs[0];
 
@@ -40,21 +45,32 @@ export const CandidatesPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Job selector dropdown */}
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-white p-2 rounded-xl border border-slate-200 shadow-xs">
-          <Briefcase className="w-4 h-4 text-indigo-600" />
-          <span>Active Role:</span>
-          <select
-            value={currentJob.id}
-            onChange={(e) => setActiveJobId(e.target.value)}
-            className="px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-900 focus:outline-hidden"
+        {/* Action Controls & Job selector */}
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            id="btn-upload-candidates-page"
+            onClick={() => setIsUploadModalOpen(true)}
+            className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-sm shadow-indigo-600/20 flex items-center gap-2 cursor-pointer transition-all hover:scale-[1.02]"
           >
-            {jobs.map((j) => (
-              <option key={j.id} value={j.id}>
-                {j.title} ({j.candidateCount} candidates)
-              </option>
-            ))}
-          </select>
+            <Upload className="w-4 h-4" />
+            <span>Upload Resumes / Gallery</span>
+          </button>
+
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-white p-2 rounded-xl border border-slate-200 shadow-xs">
+            <Briefcase className="w-4 h-4 text-indigo-600" />
+            <span>Active Role:</span>
+            <select
+              value={currentJob.id}
+              onChange={(e) => setActiveJobId(e.target.value)}
+              className="px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-900 focus:outline-hidden cursor-pointer"
+            >
+              {jobs.map((j) => (
+                <option key={j.id} value={j.id}>
+                  {j.title} ({j.candidateCount} candidates)
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -66,6 +82,13 @@ export const CandidatesPage: React.FC = () => {
         candidates={candidates}
         job={currentJob}
         screenings={screenings}
+      />
+
+      {/* Resume Upload Modal with Gallery Support */}
+      <ResumeUploaderModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        job={currentJob}
       />
 
       {/* Floating Compare Drawer Bar if candidates are checked */}

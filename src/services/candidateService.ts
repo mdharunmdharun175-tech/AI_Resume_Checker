@@ -62,4 +62,11 @@ export const candidateService = {
 
     return { candidate, decision };
   },
+
+  async addCandidate(candidate: Candidate): Promise<Candidate> {
+    const candidates = HireFairStore.getCandidates();
+    const updated = [candidate, ...candidates.filter((c) => c.id !== candidate.id)];
+    HireFairStore.saveCandidates(updated);
+    return candidate;
+  },
 };

@@ -2,5 +2,7 @@
   "name": "HireFair AI",
   "description": "AI Resume Screening, Candidate Ranking & Bias Detection Platform with Fair Screening Mode, transparent match scores, and explainable human-in-the-loop hiring decisions.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
